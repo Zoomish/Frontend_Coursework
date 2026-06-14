@@ -1,6 +1,32 @@
+// Вспомогательная функция для извлечения имени файла из URL
+function getFileNameFromUrl(url) {
+    if (!url) return 'неизвестный файл';
+
+    try {
+        // Убираем параметры после ? если есть
+        let cleanUrl = url.split('?')[0];
+        // Разбиваем по слешам и берем последнюю часть
+        let parts = cleanUrl.split('/');
+        let fileName = parts[parts.length - 1];
+
+        // Если имя файла слишком длинное, обрезаем
+        if (fileName.length > 40) {
+            fileName = fileName.substring(0, 35) + '...';
+        }
+
+        return fileName;
+    } catch (e) {
+        return url.substring(0, 40);
+    }
+}
+
 // ============================================
 // АДМИН-ПАНЕЛЬ ЧЕРЕЗ БЭКЕНД API
 // ============================================
+
+if (typeof window.API_URL === 'undefined') {
+    window.API_URL = 'http://localhost:5000/api';
+}
 
 (function() {
     let currentUser = null;
@@ -82,7 +108,7 @@
     // ============================================
     async function loadPricesFromAPI() {
         try {
-            const response = await fetch(`http://localhost:5000/api/services`);
+            const response = await fetch(`${window.API_URL}/services`);
             const services = await response.json();
 
             const hairService = services.find(s => s.category === 'hair' || s.name === 'Прическа');
@@ -104,12 +130,13 @@
             window.services = services;
         } catch (error) {
             console.error('Ошибка загрузки цен:', error);
+            alert('Ошибка загрузки цен. Проверьте подключение к серверу.');
         }
     }
 
     async function updatePriceOnAPI(serviceId, newPrice) {
         try {
-            const response = await fetch(`http://localhost:5000/api/services/${serviceId}`, {
+            const response = await fetch(`${window.API_URL}/services/${serviceId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ price: newPrice, user_id: currentUser?.user_id || 1 })
@@ -146,7 +173,7 @@
     // ============================================
     async function loadVisitPricesFromAPI() {
         try {
-            const response = await fetch(`http://localhost:5000/api/visit-prices`);
+            const response = await fetch(`${window.API_URL}/visit-prices`);
             const prices = await response.json();
 
             const severodvinsk = prices.find(p => p.city === 'Северодвинск');
@@ -175,12 +202,13 @@
             window.visitPrices = prices;
         } catch (error) {
             console.error('Ошибка загрузки цен на выезд:', error);
+            alert('Ошибка загрузки цен на выезд.');
         }
     }
 
     async function updateVisitPriceOnAPI(priceId, newPrice) {
         try {
-            const response = await fetch(`http://localhost:5000/api/visit-prices/${priceId}`, {
+            const response = await fetch(`${window.API_URL}/visit-prices/${priceId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ price: newPrice })
@@ -217,9 +245,10 @@
     // ============================================
     // 4. УПРАВЛЕНИЕ ФОТО (ПОРТФОЛИО) - ТОЛЬКО АДМИН
     // ============================================
+
     async function loadPhotoListFromAPI() {
         try {
-            const response = await fetch(`http://localhost:5000/api/portfolio`);
+            const response = await fetch(`${window.API_URL}/portfolio`);
             const photos = await response.json();
             window.photosList = photos;
 
@@ -230,7 +259,12 @@
                 } else {
                     let html = '<h4>Список фото на сайте:</h4>';
                     photos.forEach((photo) => {
-                        html += `<div class="media-item"><span>${photo.image_url}</span><button class="delete-photo-btn" data-id="${photo.id}">Удалить</button></div>`;
+                        // Извлекаем только имя файла из полной ссылки
+                        let fileName = getFileNameFromUrl(photo.image_url);
+                        html += `<div class="media-item">
+                            <span title="${photo.image_url}">${fileName}</span>
+                            <button class="delete-photo-btn" data-id="${photo.id}">Удалить</button>
+                        </div>`;
                     });
                     container.innerHTML = html;
                 }
@@ -239,22 +273,24 @@
             document.querySelectorAll('.delete-photo-btn').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const id = parseInt(btn.dataset.id);
-                    await fetch(`http://localhost:5000/api/portfolio/${id}`, { method: 'DELETE' });
+                    await fetch(`${window.API_URL}/portfolio/${id}`, { method: 'DELETE' });
                     await loadPhotoListFromAPI();
                     alert('Фото удалено!');
                 });
             });
         } catch (error) {
             console.error('Ошибка загрузки фото:', error);
+            alert('Ошибка загрузки списка фото.');
         }
     }
 
     // ============================================
     // 5. УПРАВЛЕНИЕ ВИДЕО - ТОЛЬКО АДМИН
     // ============================================
+
     async function loadVideoListFromAPI() {
         try {
-            const response = await fetch(`http://localhost:5000/api/videos`);
+            const response = await fetch(`${window.API_URL}/videos`);
             const videos = await response.json();
             window.videosList = videos;
 
@@ -265,7 +301,12 @@
                 } else {
                     let html = '<h4>Список видео на сайте:</h4>';
                     videos.forEach((video) => {
-                        html += `<div class="media-item"><span>${video.video_url}</span><button class="delete-video-btn" data-id="${video.id}">Удалить</button></div>`;
+                        // Извлекаем только имя файла из полной ссылки
+                        let fileName = getFileNameFromUrl(video.video_url);
+                        html += `<div class="media-item">
+                            <span title="${video.video_url}">${fileName}</span>
+                            <button class="delete-video-btn" data-id="${video.id}">Удалить</button>
+                        </div>`;
                     });
                     container.innerHTML = html;
                 }
@@ -274,16 +315,16 @@
             document.querySelectorAll('.delete-video-btn').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const id = parseInt(btn.dataset.id);
-                    await fetch(`http://localhost:5000/api/videos/${id}`, { method: 'DELETE' });
+                    await fetch(`${window.API_URL}/videos/${id}`, { method: 'DELETE' });
                     await loadVideoListFromAPI();
                     alert('Видео удалено!');
                 });
             });
         } catch (error) {
             console.error('Ошибка загрузки видео:', error);
+            alert('Ошибка загрузки списка видео.');
         }
     }
-
     // ============================================
     // 6. КНОПКИ ДОБАВЛЕНИЯ (ТОЛЬКО АДМИН)
     // ============================================
@@ -292,14 +333,19 @@
         addPhotoBtn.addEventListener('click', async () => {
             const newPhoto = document.getElementById('newPhotoUrl').value.trim();
             if (newPhoto) {
-                await fetch(`http://localhost:5000/api/portfolio`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image_url: newPhoto, title: '', user_id: currentUser?.user_id || 1 })
-                });
-                await loadPhotoListFromAPI();
-                document.getElementById('newPhotoUrl').value = '';
-                alert('Фото добавлено!');
+                try {
+                    await fetch(`${window.API_URL}/portfolio`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image_url: newPhoto, title: '', user_id: currentUser?.user_id || 1 })
+                    });
+                    await loadPhotoListFromAPI();
+                    document.getElementById('newPhotoUrl').value = '';
+                    alert('Фото добавлено!');
+                } catch (error) {
+                    console.error('Ошибка добавления фото:', error);
+                    alert('Ошибка добавления фото.');
+                }
             } else {
                 alert('Введите путь к фото (например: portfolio6.png)');
             }
@@ -311,14 +357,19 @@
         addVideoBtn.addEventListener('click', async () => {
             const newVideo = document.getElementById('newVideoUrl').value.trim();
             if (newVideo) {
-                await fetch(`http://localhost:5000/api/videos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ video_url: newVideo, title: '', user_id: currentUser?.user_id || 1 })
-                });
-                await loadVideoListFromAPI();
-                document.getElementById('newVideoUrl').value = '';
-                alert('Видео добавлено!');
+                try {
+                    await fetch(`${window.API_URL}/videos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ video_url: newVideo, title: '', user_id: currentUser?.user_id || 1 })
+                    });
+                    await loadVideoListFromAPI();
+                    document.getElementById('newVideoUrl').value = '';
+                    alert('Видео добавлено!');
+                } catch (error) {
+                    console.error('Ошибка добавления видео:', error);
+                    alert('Ошибка добавления видео.');
+                }
             } else {
                 alert('Введите путь к видео (например: work6.mp4)');
             }

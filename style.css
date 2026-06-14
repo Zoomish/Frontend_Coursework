@@ -416,12 +416,6 @@ html {
     max-width: 950px;
     background-color: #F7A3C4; /* Базовый розовый цвет, если картинка не загрузится */
 
-    /* Подключение текстуры рваной бумаги */
-    background-image: url('paper-texture.png');
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-
     padding: 80px 60px;
     display: flex;
     justify-content: center;

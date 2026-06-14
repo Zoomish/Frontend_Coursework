@@ -1,7 +1,8 @@
-// ============================================
-// АВТОРИЗАЦИЯ ЧЕРЕЗ БЭКЕНД API
-// ============================================
+// auth.js - авторизация через бэкенд API
 
+if (typeof window.API_URL === 'undefined') {
+    window.API_URL = 'http://localhost:5000/api';
+}
 
 async function loginUser(username, password, role) {
     try {
@@ -16,7 +17,8 @@ async function loginUser(username, password, role) {
             return true;
         }
 
-        const response = await fetch(`http://localhost:5000/api/login`, {            method: 'POST',
+        const response = await fetch(`${window.API_URL}/login`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -44,19 +46,24 @@ async function loginUser(username, password, role) {
     }
 }
 
-const loginForm = document.getElementById('loginForm');
-if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+// Проверяем, существует ли уже обработчик (чтобы не дублировать)
+if (typeof window.loginFormInitialized === 'undefined') {
+    window.loginFormInitialized = true;
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const role = document.getElementById('role').value;
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const success = await loginUser(username, password, role);
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
 
-        if (success) {
-            window.location.href = 'index.html';
-        }
-    });
+            const success = await loginUser(username, password, role);
+
+            if (success) {
+                window.location.href = 'index.html';
+            }
+        });
+    }
 }

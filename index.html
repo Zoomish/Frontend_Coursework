@@ -93,40 +93,31 @@
 </div>
 
 <script>
-    <!-- УМНЫЙ НАВИГАЦИОННЫЙ ПОИСК ПО КЛЮЧЕВЫМ ТЕМАМ (ВСТАВИТЬ В САМЫЙ НИЗ ПЕРЕД </body>) -->
 
     document.addEventListener("DOMContentLoaded", function() {
 
-        // ==========================================================================
-        // 1. ИСПРАВЛЕННАЯ ЛОГИКА ЛИСТАНИЯ КАРУСЕЛИ КЛИПОВ
-        // ==========================================================================
+        // Листание карусели клипов
         const clipsCarousel = document.querySelector('.clips-carousel');
         const clipsNextBtn = document.getElementById('nextClipBtn');
         const clipsPrevBtn = document.getElementById('prevClipBtn');
 
         if (clipsCarousel && clipsNextBtn && clipsPrevBtn) {
-            // Клик по правой стрелке (Вперед)
             clipsNextBtn.addEventListener('click', function() {
                 const items = clipsCarousel.querySelectorAll('.clip-item');
                 if (items.length > 0) {
-                    // Берем самый первый клип и переносим его в конец контейнера
                     clipsCarousel.appendChild(items[0]);
                 }
             });
 
-            // Клик по левой стрелке (Назад)
             clipsPrevBtn.addEventListener('click', function() {
                 const items = clipsCarousel.querySelectorAll('.clip-item');
                 if (items.length > 0) {
-                    // Берем самый последний клип и вставляем его перед первым элементом
                     clipsCarousel.insertBefore(items[items.length - 1], items[0]);
                 }
             });
         }
 
-        // ==========================================================================
-        // 2. ЛОГИКА ЛИСТАНИЯ КАРУСЕЛИ ПОРТФОЛИО
-        // ==========================================================================
+        // Листание карусели портфолио
         const pCarousel = document.querySelector('.portfolio-carousel-lane');
         const pNextBtn = document.getElementById('nextPortfolioBtn');
         const pPrevBtn = document.getElementById('prevPortfolioBtn');
@@ -147,17 +138,12 @@
             });
         }
 
-
-        // ==========================================================================
-        // 2. УМНЫЙ ПОИСК ПО ТЕМАМ И АССОЦИАЦИЯМ (СТРОГО ПО ENTER)
-        // ==========================================================================
+        // Умный поиск
         const searchContainer = document.querySelector('.search-container');
         const searchBtn = document.getElementById('searchBtn');
         const searchInput = document.querySelector('.search-input');
 
         if (searchBtn && searchContainer && searchInput) {
-
-            // Открытие и закрытие строки поиска
             searchBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 searchContainer.classList.toggle('active');
@@ -166,61 +152,55 @@
                 }
             });
 
-            // Закрываем поиск при клике в любое другое место
             document.addEventListener('click', function(e) {
                 if (!searchContainer.contains(e.target)) {
                     searchContainer.classList.remove('active');
                 }
             });
 
-            // ФУНКЦИЯ УМНОГО ПОИСКА И ПЕРЕХОДА
             function performSearch() {
                 const query = searchInput.value.toLowerCase().trim();
-
                 if (query === "") return;
 
                 let targetId = null;
 
-                // СЛОВАРЬ СИНОНИМОВ: связываем вводимые слова с id ваших слайдов
                 if (query.includes("стоимост") || query.includes("цена") || query.includes("цены")) {
-                    targetId = "price-slide"; // Переход на Стоимость
+                    targetId = "price-slide";
                 }
                 else if (query.includes("сертификат")) {
-                    targetId = "certificate-slide"; // Переход на Сертификаты
+                    targetId = "certificate-slide";
                 }
                 else if (query.includes("выезд")) {
-                    targetId = "visit-slide"; // Переход на Выезд (проверьте, чтобы у слайда Выезд был id="visit-slide")
+                    targetId = "visit-slide";
                 }
                 else if (query.includes("контакт") || query.includes("данные") || query.includes("телефон") || query.includes("соцсет") || query.includes("вк") || query.includes("vk")) {
-                    targetId = "contacts-slide"; // Переход на Контакты/Телефон/Соцсети
+                    targetId = "contacts-slide";
                 }
                 else if (query.includes("обучен") || query.includes("урок")) {
-                    targetId = "education-slide"; // Переход на Обучение
+                    targetId = "education-slide";
                 }
                 else if (query.includes("место") || query.includes("карт") || query.includes("студи")) {
-                    targetId = "studio-slide"; // Переход на Место/Карты/Студию
+                    targetId = "studio-slide";
                 }
                 else if (query.includes("портфолио") || query.includes("работ")) {
-                    targetId = "portfolio-slide"; // Переход на Портфолио/Работы
+                    targetId = "portfolio-slide";
                 }
                 else if (query.includes("отзыв")) {
-                    targetId = "reviews-slide"; // Переход на Отзывы
+                    targetId = "reviews-slide";
                 }
                 else if (query.includes("клип")) {
-                    targetId = "clips-slide"; // Переход на Клипы
+                    targetId = "clips-slide";
                 }
 
-                // 1. Сначала проверяем: совпало ли слово со словарём ассоциаций
                 if (targetId) {
                     const targetSection = document.getElementById(targetId);
                     if (targetSection) {
                         targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         searchContainer.classList.remove('active');
-                        return; // Успешно перешли, останавливаем поиск
+                        return;
                     }
                 }
 
-                // 2. Если в словаре слова не нашлось, включается ОБЫЧНЫЙ поиск по тексту на слайдах
                 const allSections = document.querySelectorAll('section, main');
                 let matchedSection = null;
 
@@ -235,13 +215,11 @@
                     matchedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     searchContainer.classList.remove('active');
                 } else {
-                    // Подсветка строки красным, если вообще ничего не найдено
                     searchInput.style.color = '#ff4d4d';
                     setTimeout(() => { searchInput.style.color = ''; }, 1000);
                 }
             }
 
-            // Отслеживаем клавиши Enter и Escape
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === "Enter") {
                     e.preventDefault();
@@ -254,17 +232,15 @@
             });
         }
     });
-
 </script>
-<script src="auth.js"></script>
-<script src="admin.js"></script>
-<script src="api.js"></script>
+
+
 
 
     <main class="hero-section">
         <!-- Левая часть: фото -->
         <div class="hero-image-container">
-            <img src="photo.png" alt="Алёна Рыжкова" class="hero-image">
+            <img src="https://psv4.userapi.com/s/v1/d2/Dy1A2aovEklsjSkbLsalmdeBchnXKxECSxhnYkxF0XmJ9faSnDin0iUnlcAdfiBQZ-WLZOGPdX5VWcqQaOD8NLdi1FORikA_eCzxsF3wxi_B5-VzM81JqDghoWY_jImmMEP3QZj2S1p4/photo.png" alt="Алёна Рыжкова" class="hero-image">
         </div>
 
         <!-- Правая часть: текст -->
@@ -322,7 +298,6 @@
     <!-- ========================================== -->
     <section class="about-section" id="about-slide">
         <!-- Розовая текстурная плашка по центру -->
-        <!-- Замените 'paper-texture.png' на вашу картинку рваной бумаги -->
         <div class="paper-card">
 
             <div class="about-text-block">
@@ -356,37 +331,42 @@
 
             <!-- Карточка КЛИПЫ (ведет на слайд с каруселью клипов) -->
             <a href="#clips-slide" class="gallery-item item-clips">
-                <img src="img-clips.png" alt="Клипы">
+                <img src="https://psv4.userapi.com/s/v1/d2/mhkamHrcsu0ux_YZdNnDbgG2fucgyT3cM6KzmL63c1rHBYxdwsQof4M7GSEpo7-NKcq-atHOnQFvfn1Pk8tptbhoFJXP9YgMwMWjC28IVtlhcxyBOS3BT7Q_Tc6M4meZI-ZL7mQgSyDT/img-clips.png" alt="Клипы">
                 <span class="item-title">КЛИПЫ</span>
             </a>
 
             <!-- Карточка ОБУЧЕНИЕ (ведет на 8 слайд с обучением) -->
             <a href="#education-slide" class="gallery-item item-education">
-                <img src="img-education.png" alt="Обучение">
+                <img src="https://psv4.userapi.com/s/v1/d2/xhL_HAptMUxoMAmekmU3CbaS_oRNPFjqMU6IPPS_YlqDoV5MU_i8elgA167409anh6_vQGpoG8fqb2f2iIGKPqC_DjzSHyK61g2zZm52ILDKV2-aH8mpi6nLvXZQHpDg0Rzhdhcvvd3T/img-education.png" alt="Обучение">
+
                 <span class="item-title">ОБУЧЕНИЕ</span>
             </a>
 
             <!-- Карточка РАБОТЫ (ведет на слайд с портфолио-каруселью) -->
             <a href="#portfolio-slide" class="gallery-item item-portfolio">
-                <img src="img-portfolio.png" alt="Работы">
+                <img src="https://psv4.userapi.com/s/v1/d2/OlUG91ujzNqDbFquMhnOR6u_5tQn568ip6rTTrd-QOCgmlvoA6qNgelX_ugX4TdZEuAus2-6-waCVe-MRpmc6UYwOevUYo7kNYKbOWCQ7OeercgJjCTo6Epix-_Cj1evSgcO4y5zi9ks/img-portfolio.png" alt="Работы">
+
                 <span class="item-title">РАБОТЫ</span>
             </a>
 
             <!-- Карточка СЕРТИФИКАТ (ведет на слайд с сертификатами, если он есть) -->
             <a href="#certificate-slide" class="gallery-item item-certificate">
-                <img src="img-certificate.png" alt="Сертификат">
+                <img src="https://psv4.userapi.com/s/v1/d2/-4sl8FfYTSD0MPmzgRjmPgvH3TweX32fBatPLllpTpEZym9wD2kCURMWK1nRED8q4OlRr7GKAzhIlyC7zdp7wiaZx2_8xjmakcKXQNwqSHdnGQWpGavHCHqDGnwN62rN7X576q2sfeSq/img-certificate.png" alt="Сертификат">
+
                 <span class="item-title">СЕРТИФИКАТ</span>
             </a>
 
             <!-- Карточка ОТЗЫВЫ (ведет на слайд с 5 картинками отзывов) -->
             <a href="#reviews-slide" class="gallery-item item-reviews">
-                <img src="img-reviews.png" alt="Отзывы">
+                <img src="https://psv4.userapi.com/s/v1/d2/me88PG1Jc2xkZFi_hUVbJYj9kQNuzLHYhJxDv2wAimxmir3TXG5IUM6xSs1qQLRb5NTaS2YpLaOHOlUYrGJAzTx2qCCepo2KN_DMm_sWg7SCU3qsnItnUlSP_kPBnGFFp_uNrI19fBDY/img-reviews.png" alt="Отзывы">
+
                 <span class="item-title">ОТЗЫВЫ</span>
             </a>
 
             <!-- Карточка КАРТА (ведет на последний 13 слайд со студией и картой) -->
             <a href="#studio-slide" class="gallery-item item-map">
-                <img src="img-map.png" alt="Карта">
+                <img src="https://psv4.userapi.com/s/v1/d2/Q7_fRn5WpmiNWp8nzPZim76ZfUk98iTWguFeeSeR9VnzxCmhY6HMCPKb-Z6wr1jvO-4OZFa_Y2Da2A8__F5lSgDWgiH__6xEmAXUhn4l66cHqW-sNEGU5_ojYeGy9VugYBXLCfPC8s8p/img-map.png" alt="Карта">
+
                 <span class="item-title">КАРТА</span>
             </a>
 
@@ -418,9 +398,9 @@
                     </div>
                 </div>
                 <!-- Фото прически с наклоном -->
-                <!-- Замените 'hair.png' на ваше фото -->
                 <div class="price-card-img img-hair">
-                    <img src="hair.png" alt="Прическа">
+                    <img src="https://psv4.userapi.com/s/v1/d2/hTrvkWKRMa7E1iRCDzOgEHiYk3pPSZ70pF9O8oTKoDHEuJ6B_OIwmQoZ8T1vaS7_L7siMC3XH006yjo0H5qz9gTZxJKqwxWeAq9kTx33KOutCzsw25Hw5S-HNf2GYQe7-jNlbfNKu0qf/hair.png" alt="Прическа">
+
                 </div>
             </div>
 
@@ -434,9 +414,9 @@
                     </div>
                 </div>
                 <!-- Фото макияжа с наклоном -->
-                <!-- Замените 'makeup.png' на ваше фото -->
+
                 <div class="price-card-img img-makeup">
-                    <img src="makeup.png" alt="Макияж">
+                    <img src="https://psv4.userapi.com/s/v1/d2/1ycq7zhVACOz5gwHqo0oyoU102ynXKNnZ2qQPYU8Bm-fNikXDPBjrn1b-mKunxVbn5sHs5WA5thf75p0XEy8mcBWG8KGeBiuzEDl1_g65sosOOa99-QAJ7Nk554auTd_nKqWlPgi0K2t/makeup.png" alt="Макияж">
                 </div>
             </div>
 
@@ -453,11 +433,8 @@
     <!-- ========================================== -->
     <section class="delivery-section" id="visit-slide">
 
-        <!-- Верхняя зона: стрелка и заголовок -->
+        <!-- Верхняя зона:  заголовок -->
         <div class="delivery-header-layout">
-            <div class="arrow-container">
-                <img src="arrow-decor.svg" alt="" class="delivery-arrow">
-            </div>
             <h2 class="delivery-main-title">ВЫЕЗД</h2>
         </div>
 
@@ -600,10 +577,12 @@
 
                     <div class="images-row">
                         <div class="img-box img-before">
-                            <img src="brunette-before.png" alt="До">
+                            <img src="https://psv4.userapi.com/s/v1/d2/7ob0F2kRZH3rLzpLsED_VbQMyGOtdf3Djcck25q5bwHB6xq_l_ERY9sk3kqNrmrcGAOFKTHo6YBmwvVpqvOJQWc7uY1YUYaGnc4dEadFKh40CbxZ7lbI6xLU78MjtYN4qNQEdNilCvHw/blonde-before.png" alt="До">
+
                         </div>
                         <div class="img-box img-after">
-                            <img src="blonde-before.png" alt="До 2">
+                            <img src="https://psv4.userapi.com/s/v1/d2/4zTSsZfccoOVG_pNxVSEfb0Qo14tX1tWDEdaT_C3Tbv6sbgL1FDYbsLIlcJsQcknmQxBl74V5h28V0YCj9HqKhzm9giCY9gTnTGwq3v3wxJuIt96P2vFh-GXU2HZ0f8BCW-ik2SPoQvL/brunette-before.png" alt="До 2">
+
                         </div>
                     </div>
                 </div>
@@ -615,10 +594,11 @@
                 <div class="work-pair pair-two">
                     <div class="images-row">
                         <div class="img-box img-before-two">
-                            <img src="blonde-after.png" alt="После 2">
+                            <img src="https://psv4.userapi.com/s/v1/d2/sI-COM8QPQoFuIqwQ5xLFiaVq7_MVzuhRFqIKMGmmnUVOJaB0spTi7IUeKwaZjPLVQ0aVi54GubJl1aLnyBgwKK0vuiSNg9i-NeoUeGSpXtBseUMXOh7tyVJNM2SKshvI8ZWxhwI2vKV/blonde-after.png" alt="После 2">
+
                         </div>
                         <div class="img-box img-after-two">
-                            <img src="brunette-after.png" alt="После">
+                            <img src="https://psv4.userapi.com/s/v1/d2/1HIaHqRPNDG6IDseDuUWS5vNBUfPV-tsje9nbw_S_r9h4u-pshJZSJYLMFxjJ8tSBl8nvMUgXtrL1yOaVgjHyG0k5DNx-a2yfthjbM2GJpZii0zTmV3nIwogCNiUdTD9ysAdvCjWC-ya/brunette-after.png" alt="После">
                         </div>
                     </div>
 
@@ -671,17 +651,11 @@
 
             <!-- Правая колонка с изображением рук и конверта -->
             <div class="certificate-image-block">
-                <!-- Замените 'cert-mockup.png' на вырезанную картинку рук с конвертом -->
-                <img src="cert-mockup.png" alt="Подарочный сертификат" class="cert-main-img">
+                <img src="https://psv4.userapi.com/s/v1/d2/_N9iAlOV6hyq3DSTP1A2b36zYjk8SXyTsA4mpnzrmw74NreVQp3-FL4Pw1jv5uDWJtGDpQvTd4WpwdVaSn-3urlQ1Nzb9YzjfaPPkhdu7HYXVgmtp3m95IA09xvWvH80b5gPWvZNaYLS/cert-mockup.png" alt="Подарочный сертификат" class="cert-main-img">
+
             </div>
 
         </div>
-
-        <!-- Декоративные розовые цветочки по углам -->
-        <!-- Замените 'flower-decor.svg' на файл вашей иконки цветка -->
-        <img src="flower-decor.svg" alt="" class="flower-icon flower-top-center">
-        <img src="flower-decor.svg" alt="" class="flower-icon flower-bottom-left">
-        <img src="flower-decor.svg" alt="" class="flower-icon flower-bottom-right">
 
     </section>
 
@@ -710,12 +684,25 @@
     <!-- СЛАЙД: Отзывы                              -->
         <!-- СЛАЙД: ОТЗЫВЫ (ГОТОВЫЙ КОД ПОД РЕАЛЬНЫЕ ФОТОГРАФИИ) -->
     <section class="reviews-section" id="reviews-slide">
-
         <div class="reviews-title-wrapper">
             <h2 class="reviews-main-title">ОТЗЫВЫ</h2>
         </div>
-
         <div class="reviews-masonry-grid" id="reviewsContainer">
+            <div class="reviews-col col-left">
+                <div class="review-box item-2 short-box">
+                    <img src="https://psv4.userapi.com/s/v1/d2/PGrJvbYBdyChIsLlA6ZyP9PdikI9TRG52kua9o_2op_J7yG7xfFWg3aVtg_N85IbfFsp7E7_VpwYMcwz7MykZ7wtK2W_sG154wShacmdDbnqLFlO456WxIZTTOVRweeYgBY7HaOb8Iet/review2.png" alt="Отзыв" class="review-img">
+                </div>
+            </div>
+            <div class="reviews-col col-center">
+                <div class="review-box item-3 medium-box">
+                    <img src="https://psv4.userapi.com/s/v1/d2/jSP1gEUquqRFml2vyYxwHYCTz5Im_L9AjHfcSnumGzGt3-UB2uqY_q7mx7I0Q3if_jy5h2Y2JLHAsT9vW_YvAiikwumMubRXiHnDMAWsa0bm3KuOax3XjY-Yfa_cO1PhdYP9U6XamH1A/review3.png" alt="Отзыв" class="review-img">
+                </div>
+            </div>
+            <div class="reviews-col col-right">
+                <div class="review-box item-5 medium-box">
+                    <img src="https://psv4.userapi.com/s/v1/d2/erz7sMjPPo-mow6LKNZPKsyW4cRiM7y6XcJ_I0sK-rP8hSL0pZcW1U_H97tHZkMeaL9Nh3h1smTAoprRDcBHs1NbUF58PEoHLIDKCrIgV9wM4Bejp1Z8zmr7DN6d2gnVzVHiKilFnej6/review5.png" alt="Отзыв" class="review-img">
+                </div>
+            </div>
         </div>
     </section>
 
@@ -771,7 +758,8 @@
                 <a href="https://yandex.ru/maps/10849/severodvinsk/house/belomorskiy_prospekt_3/Z0AYfgNiSU0PQFhufXl2c3RhYg==/?ll=39.842088%2C64.572826&z=16.9" target="_blank" class="studio-map-link">
                     <div class="map-wrapper">
                         <!-- Сейчас это красивый текст по центру квадрата. -->
-                        <img src="map.png" alt="Карта">
+                        <img src="https://psv4.userapi.com/s/v1/d2/5o-_0PGjCSPlF722anMId90oTIt9i-G312GimYAyUSUub-GRUcJebpr-8IYvT8ntY0pR17aE1L4IIVnYbuz2ykvpPF4PCizDGjkbU2kNonw_OFqkRpmquIRNQ2JuEiQinRaNQrO5KfMc/map.png" alt="Карта">
+
                     </div>
                 </a>
             </div>
@@ -787,7 +775,7 @@
         </footer>
     </section>
 
-
+<script src="config.js"></script>
 <script src="auth.js"></script>
 <script src="admin.js"></script>
 <script src="api.js"></script>
