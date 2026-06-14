@@ -1,6 +1,6 @@
 // config.js - единый файл конфигурации
 const CONFIG = {
-    API_URL: 'https://backent-br.onrender.com'
+    API_URL: 'https://backent-br.onrender.com/api'
 };
 
 // Глобальная переменная API_URL для обратной совместимости
